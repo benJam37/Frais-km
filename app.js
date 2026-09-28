@@ -74,18 +74,23 @@ function renderHistory(){
     </div>`).join(""):'<div class="small">Aucun trajet pour cette période.</div>';
 }
 
-async function geocode(q){
-  const u="https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=fr&q="+encodeURIComponent(q);
-  const r=await fetch(u,{headers:{Accept:"application/json"}});
-  if(!r.ok) throw new Error("Géocodage indisponible");
-  const d=await r.json(); if(!d.length) throw new Error("Adresse introuvable : "+q);
-  return {lat:+d[0].lat,lon:+d[0].lon};
-}
-async function route(a,b){
-  const u=`https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=false`;
-  const r=await fetch(u); if(!r.ok) throw new Error("Calcul d'itinéraire indisponible");
-  const d=await r.json(); if(d.code!=="Ok"||!d.routes?.length) throw new Error("Itinéraire introuvable");
-  return d.routes[0].distance/1000;
+async function calculateDistance(departure, arrival){
+  const { data, error } = await client.functions.invoke("calculate-distance", {
+    body: {
+      departure,
+      arrival
+    }
+  });
+
+  if(error){
+    throw new Error(error.message || "Calcul de distance indisponible");
+  }
+
+  if(!data || typeof data.distance_km !== "number"){
+    throw new Error(data?.error || "Distance introuvable");
+  }
+
+  return data.distance_km;
 }
 
 $("tabLogin").onclick=()=>showAuth("login");
@@ -109,15 +114,30 @@ $("logout").onclick=()=>client.auth.signOut();
 
 $("calculate").onclick=async()=>{
   const a=$("departure").value.trim(),b=$("arrival").value.trim();
-  if(!a||!b){setMsg("tripMessage","Renseigne le départ et l'arrivée.",true);return}
-  $("calculate").disabled=true;setMsg("tripMessage","Calcul en cours…");
+
+  if(!a||!b){
+    setMsg("tripMessage","Renseigne le départ et l'arrivée.",true);
+    return;
+  }
+
+  $("calculate").disabled=true;
+  setMsg("tripMessage","Calcul en cours…");
+
   try{
-    const [pa,pb]=await Promise.all([geocode(a),geocode(b)]);
-    calculatedKm=await route(pa,pb);
-    $("result").classList.remove("hidden");$("result").textContent="Distance routière : "+fmt(calculatedKm);
-    $("saveTrip").disabled=false;setMsg("tripMessage","");
-  }catch(e){calculatedKm=null;$("saveTrip").disabled=true;$("result").classList.add("hidden");setMsg("tripMessage",e.message,true)}
-  finally{$("calculate").disabled=false}
+    calculatedKm=await calculateDistance(a,b);
+
+    $("result").classList.remove("hidden");
+    $("result").textContent="Distance routière : "+fmt(calculatedKm);
+    $("saveTrip").disabled=false;
+    setMsg("tripMessage","");
+  }catch(e){
+    calculatedKm=null;
+    $("saveTrip").disabled=true;
+    $("result").classList.add("hidden");
+    setMsg("tripMessage",e.message,true);
+  }finally{
+    $("calculate").disabled=false;
+  }
 };
 $("reverse").onclick=()=>{const a=$("departure").value;$("departure").value=$("arrival").value;$("arrival").value=a};
 $("gps").onclick=()=>{
