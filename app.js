@@ -413,6 +413,43 @@ $("loginForm").onsubmit=async e=>{
   const {error}=await client.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});
   if(error)setMsg("authMessage",error.message,true);
 };
+$("forgotPassword").onclick=()=>{
+  showPasswordReset();
+};
+
+$("backToLogin").onclick=()=>{
+  showAuth("login");
+};
+
+$("resetForm").onsubmit=async e=>{
+  e.preventDefault();
+
+  const email=$("resetEmail").value.trim();
+
+  if(!email){
+    setMsg("authMessage","Saisis ton adresse e-mail.",true);
+    return;
+  }
+
+  setMsg("authMessage","Envoi du lien de récupération...");
+
+  const redirectTo=window.location.origin+window.location.pathname;
+
+  const {error}=await client.auth.resetPasswordForEmail(
+    email,
+    {redirectTo}
+  );
+
+  if(error){
+    setMsg("authMessage",error.message,true);
+    return;
+  }
+
+  setMsg(
+    "authMessage",
+    "Si cette adresse correspond à un compte, un e-mail de récupération a été envoyé."
+  );
+};
 $("signupForm").onsubmit=async e=>{
   e.preventDefault();setMsg("authMessage","Création du compte…");
   const {error}=await client.auth.signUp({
