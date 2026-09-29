@@ -46,6 +46,7 @@
 </section>
 
 <section id="appView" class="hidden">
+
   <div class="welcome">
     <div>
       <h2 id="hello">Bonjour 👋</h2>
@@ -53,51 +54,156 @@
     </div>
   </div>
 
-  <section class="card">
-    <h2>Nouveau trajet</h2>
-    <form id="tripForm">
-      <label>Date<input id="date" type="date" required></label>
-      <label>Départ
-      <input id="departure" placeholder="Saisir une adresse de départ..." required>
-      </label>
-      <label>Arrivée<input id="arrival" placeholder="Saisir une adresse d'arrivée..." required></label>
-      <div class="row">
-        <button id="reverse" type="button" class="secondary">↕️ Inverser</button>
-        <button id="calculate" type="button">📏 Calculer</button>
+  <!-- NAVIGATION PRINCIPALE -->
+  <nav class="mainTabs" aria-label="Navigation principale">
+    <button type="button" class="mainTab active" data-page="newTripPage">
+      🚗<span>Nouveau trajet</span>
+    </button>
+
+    <button type="button" class="mainTab" data-page="mileagePage">
+      📊<span>Kilométrage</span>
+    </button>
+
+    <button type="button" class="mainTab" data-page="historyPage">
+      📋<span>Historique</span>
+    </button>
+  </nav>
+
+
+  <!-- ========================= -->
+  <!-- NOUVEAU TRAJET -->
+  <!-- ========================= -->
+
+  <section id="newTripPage" class="appPage">
+
+    <section class="card">
+      <h2>Nouveau trajet</h2>
+
+      <form id="tripForm">
+
+        <label>
+          Date
+          <input id="date" type="date" required>
+        </label>
+
+        <label>
+          Départ
+          <input
+            id="departure"
+            placeholder="Saisir une adresse de départ..."
+            required
+          >
+        </label>
+
+        <label>
+          Arrivée
+          <input
+            id="arrival"
+            placeholder="Saisir une adresse d'arrivée..."
+            required
+          >
+        </label>
+
+        <div class="row">
+          <button id="reverse" type="button" class="secondary">
+            ↕️ Inverser
+          </button>
+
+          <button id="calculate" type="button">
+            📏 Calculer
+          </button>
+        </div>
+
+        <div id="result" class="result hidden" aria-live="polite"></div>
+
+        <label>
+          Motif
+          <input
+            id="reason"
+            placeholder="Visite, réunion, formation..."
+          >
+        </label>
+
+        <button id="saveTrip" type="submit" disabled>
+          💾 Enregistrer
+        </button>
+
+        <div id="tripMessage" aria-live="polite"></div>
+
+      </form>
+    </section>
+
+  </section>
+
+
+  <!-- ========================= -->
+  <!-- KILOMÉTRAGE -->
+  <!-- ========================= -->
+
+  <section id="mileagePage" class="appPage hidden">
+
+    <section class="card">
+
+      <div class="sectionHead">
+        <h2>📊 Kilométrage</h2>
+        <select id="yearSelect"></select>
       </div>
-      <div id="result" class="result hidden" aria-live="polite"></div>
-      <label>Motif<input id="reason" placeholder="Visite, réunion, formation..."></label>
-      <button id="saveTrip" type="submit" disabled>💾 Enregistrer</button>
-      <div id="tripMessage" aria-live="polite"></div>
-    </form>
+
+      <div class="yearTotal">
+        <span>Total annuel</span>
+        <strong id="yearTotal">0,0 km</strong>
+      </div>
+
+      <div id="months" class="months"></div>
+
+    </section>
+
   </section>
 
-  <section class="card">
-    <div class="sectionHead"><h2>📊 Kilométrage</h2><select id="yearSelect"></select></div>
-    <div class="yearTotal"><span>Total annuel</span><strong id="yearTotal">0,0 km</strong></div>
-    <div id="months" class="months"></div>
+
+  <!-- ========================= -->
+  <!-- HISTORIQUE -->
+  <!-- ========================= -->
+
+  <section id="historyPage" class="appPage hidden">
+
+    <section class="card">
+
+      <div class="sectionHead">
+        <h2>📋 Historique</h2>
+
+        <select id="historyMonth"></select>
+      </div>
+
+      <!-- EXPORTS -->
+      <div class="exportSection">
+
+        <div class="exportTitle">
+          Exporter mes trajets
+        </div>
+
+        <div class="row exportRow">
+
+          <button id="exportYear" type="button" class="secondary">
+            📊 Excel année
+          </button>
+
+          <button id="exportMonth" type="button" class="secondary">
+            📅 Excel mois
+          </button>
+
+        </div>
+
+        <div id="exportMessage" class="small" aria-live="polite"></div>
+
+      </div>
+
+      <div id="history"></div>
+
+    </section>
+
   </section>
 
-  <section class="card">
-  <div class="sectionHead">
-    <h2>📋 Historique</h2>
-    <select id="historyMonth"></select>
-  </div>
-
-  <div id="history"></div>
-
-  <div class="row exportRow">
-    <button id="exportYear" type="button" class="secondary">
-      📊 Excel année
-    </button>
-
-    <button id="exportMonth" type="button" class="secondary">
-      📅 Excel mois
-    </button>
-  </div>
-
-  <div id="exportMessage" class="small" aria-live="polite"></div>
-</section>
 </section>
 </main>
 
