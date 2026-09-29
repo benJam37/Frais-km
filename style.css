@@ -122,7 +122,11 @@ select{
   font-size:16px;
   background:white;
 }
-
+input[type="date"]{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
 input:focus,
 select:focus{
   outline:none;
