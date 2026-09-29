@@ -433,7 +433,7 @@ $("resetForm").onsubmit=async e=>{
 
   setMsg("authMessage","Envoi du lien de récupération...");
 
-  const redirectTo=window.location.origin+window.location.pathname;
+  const redirectTo=window.location.origin+window.location.pathname+"?recovery=1";
 
   const {error}=await client.auth.resetPasswordForEmail(
     email,
@@ -584,7 +584,13 @@ async function boot(){
     setMsg("authMessage","La connexion Supabase n'est pas encore configurée. Termine l'étape de configuration indiquée avec la V2.",true);
     return;
   }
+const isRecovery = new URLSearchParams(window.location.search).get("recovery")==="1";
 
+if(isRecovery){
+  showAuth();
+  showNewPasswordForm();
+  return;
+}
   const {data}=await client.auth.getSession();
 
   if(data.session){
