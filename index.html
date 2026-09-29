@@ -30,9 +30,36 @@
     <h2>Bienvenue 👋</h2>
     <label>E-mail<input id="loginEmail" type="email" autocomplete="email" required></label>
     <label>Mot de passe<input id="loginPassword" type="password" autocomplete="current-password" required></label>
-    <button type="submit">Se connecter</button>
-  </form>
 
+<button id="forgotPassword" type="button" class="linkButton">
+  Mot de passe oublié ?
+</button>
+
+<button type="submit">Se connecter</button>
+  </form>
+<form id="resetForm" class="hidden">
+  <h2>Réinitialiser mon mot de passe</h2>
+
+  <p class="hint">
+    Saisis ton adresse e-mail et tu recevras un lien pour créer un nouveau mot de passe.
+  </p>
+
+  <label>
+    E-mail
+    <input
+      id="resetEmail"
+      type="email"
+      autocomplete="email"
+      required
+    >
+  </label>
+
+  <button type="submit">📧 Envoyer le lien</button>
+
+  <button id="backToLogin" type="button" class="secondary">
+    ← Retour à la connexion
+  </button>
+</form>
   <form id="signupForm" class="hidden">
     <h2>Créer mon profil</h2>
     <label>Prénom<input id="firstName" autocomplete="given-name" required></label>
@@ -42,6 +69,39 @@
     <button type="submit">Créer mon compte</button>
     <p class="hint">Un e-mail de confirmation peut être demandé selon les réglages du compte.</p>
   </form>
+  <form id="updatePasswordForm" class="hidden">
+  <h2>Nouveau mot de passe</h2>
+
+  <p class="hint">
+    Choisis ton nouveau mot de passe.
+  </p>
+
+  <label>
+    Nouveau mot de passe
+    <input
+      id="newPassword"
+      type="password"
+      minlength="8"
+      autocomplete="new-password"
+      required
+    >
+  </label>
+
+  <label>
+    Confirmer le mot de passe
+    <input
+      id="confirmPassword"
+      type="password"
+      minlength="8"
+      autocomplete="new-password"
+      required
+    >
+  </label>
+
+  <button type="submit">
+    🔐 Enregistrer le nouveau mot de passe
+  </button>
+</form>
   <div id="authMessage" aria-live="polite"></div>
 </section>
 
