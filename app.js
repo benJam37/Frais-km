@@ -457,7 +457,35 @@ $("history").onclick=async e=>{
     window.scrollTo({top:0,behavior:"smooth"});
   }
 };
+// ---------------------------------------------------------
+// NAVIGATION PRINCIPALE
+// ---------------------------------------------------------
 
+document.querySelectorAll(".mainTab").forEach(tab => {
+
+  tab.addEventListener("click", () => {
+
+    const pageId = tab.dataset.page;
+
+    document.querySelectorAll(".mainTab").forEach(t => {
+      t.classList.remove("active");
+    });
+
+    tab.classList.add("active");
+
+    document.querySelectorAll(".appPage").forEach(page => {
+      page.classList.add("hidden");
+    });
+
+    const page = document.getElementById(pageId);
+
+    if(page){
+      page.classList.remove("hidden");
+    }
+
+  });
+
+});
 async function boot(){
   if(window.SUPABASE_URL.includes("COLLE_ICI")||window.SUPABASE_PUBLISHABLE_KEY.includes("COLLE_ICI")){
     showAuth();setMsg("authMessage","La connexion Supabase n'est pas encore configurée. Termine l'étape de configuration indiquée avec la V2.",true);return;
