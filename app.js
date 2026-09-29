@@ -21,6 +21,24 @@ function showAuth(tab="login"){
   $("loginForm").classList.toggle("hidden",tab!=="login"); $("signupForm").classList.toggle("hidden",tab!=="signup");
   $("tabLogin").classList.toggle("active",tab==="login"); $("tabSignup").classList.toggle("active",tab==="signup");
 }
+function showPasswordReset(){
+  $("loginForm").classList.add("hidden");
+  $("signupForm").classList.add("hidden");
+  $("resetForm").classList.remove("hidden");
+  $("updatePasswordForm").classList.add("hidden");
+
+  $("resetEmail").value = $("loginEmail").value || "";
+  $("authMessage").textContent = "";
+}
+
+function showNewPasswordForm(){
+  $("loginForm").classList.add("hidden");
+  $("signupForm").classList.add("hidden");
+  $("resetForm").classList.add("hidden");
+  $("updatePasswordForm").classList.remove("hidden");
+
+  $("authMessage").textContent = "";
+}
 function showApp(){
   $("authView").classList.add("hidden"); $("appView").classList.remove("hidden"); $("logout").classList.remove("hidden");
   $("date").value ||= todayISO();
@@ -494,7 +512,24 @@ async function boot(){
   if(data.session){user=data.session.user;showApp();await loadProfile();await loadTrips()}else showAuth();
 }
 client.auth.onAuthStateChange((_event,session)=>{
-  if(session&&!user){user=session.user;showApp();loadProfile();loadTrips()}
-  if(!session){user=null;showAuth()}
+
+  if(_event === "PASSWORD_RECOVERY"){
+    user = session?.user || null;
+    showNewPasswordForm();
+    return;
+  }
+
+  if(session&&!user){
+    user=session.user;
+    showApp();
+    loadProfile();
+    loadTrips();
+  }
+
+  if(!session){
+    user=null;
+    showAuth();
+  }
+
 });
 boot();
