@@ -75,6 +75,7 @@ function renderHistory(){
 }
 
 async function calculateDistance(departure, arrival){
+
   const { data, error } = await client.functions.invoke("calculate-distance", {
     body: {
       departure,
@@ -92,6 +93,181 @@ async function calculateDistance(departure, arrival){
 
   return data.distance_km;
 }
+
+
+// ---------------------------------------------------------
+// AUTOCOMPLÉTION DES ADRESSES
+// ---------------------------------------------------------
+
+async function autocompleteAddress(query){
+
+  const { data, error } = await client.functions.invoke("calculate-distance", {
+    body: {
+      action: "autocomplete",
+      query
+    }
+  });
+
+  if(error){
+    throw new Error(error.message || "Recherche d'adresse indisponible");
+  }
+
+  return data?.suggestions || [];
+}
+
+
+function setupAddressAutocomplete(inputId){
+
+  const input = $(inputId);
+
+  if(!input) return;
+
+  const parent = input.parentElement;
+
+  parent.style.position = "relative";
+
+  const box = document.createElement("div");
+  box.className = "addressSuggestions";
+
+  box.style.cssText = `
+    position:absolute;
+    top:calc(100% + 4px);
+    left:0;
+    width:100%;
+    background:white;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    box-shadow:0 6px 18px rgba(0,0,0,.12);
+    z-index:1000;
+    overflow:hidden;
+    display:none;
+  `;
+
+  parent.appendChild(box);
+
+  let timer = null;
+  let requestId = 0;
+
+  function hideSuggestions(){
+    box.style.display = "none";
+    box.innerHTML = "";
+  }
+
+  function showSuggestions(suggestions){
+
+    box.innerHTML = "";
+
+    if(!suggestions.length){
+      hideSuggestions();
+      return;
+    }
+
+    suggestions.forEach(suggestion => {
+
+      const item = document.createElement("button");
+
+      item.type = "button";
+      item.textContent = suggestion.label;
+
+      item.style.cssText = `
+        display:block;
+        width:100%;
+        text-align:left;
+        padding:12px 14px;
+        border:0;
+        border-bottom:1px solid #e5e7eb;
+        background:white;
+        color:#111827;
+        font-size:15px;
+        font-weight:500;
+        cursor:pointer;
+        min-height:44px;
+      `;
+
+      item.addEventListener("mouseenter", () => {
+        item.style.background = "#f3f4f6";
+      });
+
+      item.addEventListener("mouseleave", () => {
+        item.style.background = "white";
+      });
+
+      item.addEventListener("mousedown", (event) => {
+        event.preventDefault();
+
+        input.value = suggestion.label;
+
+        hideSuggestions();
+
+        input.dispatchEvent(new Event("change", {
+          bubbles:true
+        }));
+      });
+
+      box.appendChild(item);
+    });
+
+    box.style.display = "block";
+  }
+
+
+  input.addEventListener("input", () => {
+
+    clearTimeout(timer);
+
+    const query = input.value.trim();
+
+    if(query.length < 3){
+      hideSuggestions();
+      return;
+    }
+
+    timer = setTimeout(async () => {
+
+      const currentRequest = ++requestId;
+
+      try{
+
+        const suggestions = await autocompleteAddress(query);
+
+        if(currentRequest !== requestId) return;
+
+        showSuggestions(suggestions);
+
+      }catch(error){
+
+        console.error("Autocomplétion :", error);
+        hideSuggestions();
+
+      }
+
+    }, 300);
+  });
+
+
+  input.addEventListener("blur", () => {
+
+    setTimeout(() => {
+      hideSuggestions();
+    }, 150);
+
+  });
+
+
+  input.addEventListener("keydown", event => {
+
+    if(event.key === "Escape"){
+      hideSuggestions();
+    }
+
+  });
+
+}
+
+
+// Activation sur les deux champs
+setupAddressAutocomplete("departure");
+setupAddressAutocomplete("arrival");
 
 $("tabLogin").onclick=()=>showAuth("login");
 $("tabSignup").onclick=()=>showAuth("signup");
