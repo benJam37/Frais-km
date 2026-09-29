@@ -79,13 +79,30 @@
   </section>
 
   <section class="card">
-    <div class="sectionHead"><h2>📋 Historique</h2><select id="historyMonth"></select></div>
-    <div id="history"></div>
-  </section>
+  <div class="sectionHead">
+    <h2>📋 Historique</h2>
+    <select id="historyMonth"></select>
+  </div>
+
+  <div id="history"></div>
+
+  <div class="row exportRow">
+    <button id="exportYear" type="button" class="secondary">
+      📊 Excel année
+    </button>
+
+    <button id="exportMonth" type="button" class="secondary">
+      📅 Excel mois
+    </button>
+  </div>
+
+  <div id="exportMessage" class="small" aria-live="polite"></div>
+</section>
 </section>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="config.js"></script>
 <script src="app.js"></script>
 </body>
