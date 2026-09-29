@@ -580,30 +580,29 @@ document.querySelectorAll(".mainTab").forEach(tab => {
 });
 async function boot(){
   if(window.SUPABASE_URL.includes("COLLE_ICI")||window.SUPABASE_PUBLISHABLE_KEY.includes("COLLE_ICI")){
-    showAuth();setMsg("authMessage","La connexion Supabase n'est pas encore configurée. Termine l'étape de configuration indiquée avec la V2.",true);return;
+    showAuth();
+    setMsg("authMessage","La connexion Supabase n'est pas encore configurée. Termine l'étape de configuration indiquée avec la V2.",true);
+    return;
   }
-  const {data}=await client.auth.getSession();
-  if(data.session){user=data.session.user;showApp();await loadProfile();await loadTrips()}else showAuth();
-}
-client.auth.onAuthStateChange((_event,session)=>{
 
-  if(_event === "PASSWORD_RECOVERY"){
-    user = session?.user || null;
+  const isRecovery = window.location.hash.includes("type=recovery");
+
+  if(isRecovery){
+    showAuth();
     showNewPasswordForm();
     return;
   }
 
-  if(session&&!user){
-    user=session.user;
-    showApp();
-    loadProfile();
-    loadTrips();
-  }
+  const {data}=await client.auth.getSession();
 
-  if(!session){
-    user=null;
+  if(data.session){
+    user=data.session.user;
+    showApp();
+    await loadProfile();
+    await loadTrips();
+  }else{
     showAuth();
   }
-
+}
 });
 boot();
