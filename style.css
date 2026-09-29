@@ -453,3 +453,12 @@ button:disabled{
   }
 
 }
+.linkButton{
+  background:transparent;
+  color:#374151;
+  padding:6px 0;
+  min-height:auto;
+  font-size:14px;
+  text-decoration:underline;
+  font-weight:600;
+}
