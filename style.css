@@ -1,21 +1,451 @@
-*{box-sizing:border-box}
-body{margin:0;background:#f3f4f6;color:#111827;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-header{background:#111827;color:white;padding:20px 18px calc(20px + env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center;gap:12px}
-header h1{margin:0;font-size:27px} header p{margin:4px 0 0;color:#d1d5db}
-main{max-width:760px;margin:auto;padding:16px}
-.card{background:white;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 2px 12px #0000000d}
-h2{font-size:20px;margin:0 0 15px}
-label{display:block;font-weight:650;margin:12px 0}
-input,select{width:100%;margin-top:7px;border:1px solid #d1d5db;border-radius:12px;padding:13px;font-size:16px;background:white}
-button{border:0;border-radius:12px;padding:13px 15px;font-size:15px;font-weight:750;background:#111827;color:white;cursor:pointer;min-height:46px}
-button:disabled{opacity:.45}.secondary{background:#e5e7eb;color:#111827}.ghost{background:#374151;font-size:13px}
-.row{display:flex;gap:8px}.row input{flex:1}
-.tabs{display:flex;gap:8px;margin-bottom:18px}.tab{flex:1;background:#e5e7eb;color:#374151}.tab.active{background:#111827;color:white}
-.result{margin:14px 0;padding:14px;border-radius:12px;background:#ecfdf5;color:#065f46;font-weight:750}
-.hidden{display:none!important}.hint,.small{font-size:13px;color:#6b7280}.sectionHead{display:flex;justify-content:space-between;align-items:center;gap:10px}.sectionHead select{width:auto;min-width:125px;margin:0}
-.welcome{margin:4px 0 16px}.welcome h2{margin-bottom:4px}.welcome p{margin:0;color:#6b7280}
-.yearTotal{padding:16px;border-radius:14px;background:#f3f4f6;margin-bottom:10px}.yearTotal span{display:block;color:#6b7280;font-size:13px}.yearTotal strong{font-size:28px;display:block;margin-top:4px}
-.months{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.month{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:11px}.month span{font-size:12px;color:#6b7280}.month strong{display:block;margin-top:4px}
-.trip{border-top:1px solid #e5e7eb;padding:13px 0}.trip:first-child{border-top:0}.tripTop{display:flex;justify-content:space-between;gap:8px}.km{font-weight:800;white-space:nowrap}.tripActions{display:flex;gap:7px;margin-top:8px}.tripActions button{min-height:38px;padding:8px 10px;font-size:13px}.delete{background:#fee2e2;color:#991b1b}
-#authMessage,#tripMessage{margin-top:10px;font-size:14px}
-@media(max-width:480px){.months{grid-template-columns:repeat(2,1fr)}.sectionHead{align-items:flex-start}.sectionHead select{min-width:110px}}
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#f3f4f6;
+  color:#111827;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+/* =========================
+   EN-TÊTE
+========================= */
+
+header{
+  background:#111827;
+  color:white;
+  padding:20px 18px calc(20px + env(safe-area-inset-top));
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+header h1{
+  margin:0;
+  font-size:27px;
+}
+
+header p{
+  margin:4px 0 0;
+  color:#d1d5db;
+}
+
+/* =========================
+   STRUCTURE
+========================= */
+
+main{
+  max-width:760px;
+  margin:auto;
+  padding:16px;
+}
+
+.card{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:0 2px 12px #0000000d;
+}
+
+h2{
+  font-size:20px;
+  margin:0 0 15px;
+}
+
+.hidden{
+  display:none!important;
+}
+
+/* =========================
+   NAVIGATION PRINCIPALE
+========================= */
+
+.mainTabs{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  background:white;
+  padding:6px;
+  border-radius:16px;
+  margin-bottom:16px;
+  box-shadow:0 2px 12px #0000000d;
+  position:sticky;
+  top:8px;
+  z-index:50;
+}
+
+.mainTab{
+  min-height:58px;
+  padding:8px 6px;
+  border-radius:12px;
+  background:transparent;
+  color:#6b7280;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  font-size:21px;
+}
+
+.mainTab span{
+  font-size:12px;
+  font-weight:750;
+}
+
+.mainTab.active{
+  background:#111827;
+  color:white;
+}
+
+/* =========================
+   FORMULAIRES
+========================= */
+
+label{
+  display:block;
+  font-weight:650;
+  margin:12px 0;
+}
+
+input,
+select{
+  width:100%;
+  margin-top:7px;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  padding:13px;
+  font-size:16px;
+  background:white;
+}
+
+input:focus,
+select:focus{
+  outline:none;
+  border-color:#111827;
+  box-shadow:0 0 0 3px #11182712;
+}
+
+button{
+  border:0;
+  border-radius:12px;
+  padding:13px 15px;
+  font-size:15px;
+  font-weight:750;
+  background:#111827;
+  color:white;
+  cursor:pointer;
+  min-height:46px;
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:default;
+}
+
+.secondary{
+  background:#e5e7eb;
+  color:#111827;
+}
+
+.ghost{
+  background:#374151;
+  font-size:13px;
+}
+
+.row{
+  display:flex;
+  gap:8px;
+}
+
+.row input{
+  flex:1;
+}
+
+/* =========================
+   AUTHENTIFICATION
+========================= */
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:18px;
+}
+
+.tab{
+  flex:1;
+  background:#e5e7eb;
+  color:#374151;
+}
+
+.tab.active{
+  background:#111827;
+  color:white;
+}
+
+/* =========================
+   MESSAGE / RESULTAT
+========================= */
+
+.result{
+  margin:14px 0;
+  padding:16px;
+  border-radius:14px;
+  background:#ecfdf5;
+  color:#065f46;
+  font-weight:750;
+  text-align:center;
+  font-size:20px;
+}
+
+.hint,
+.small{
+  font-size:13px;
+  color:#6b7280;
+}
+
+#authMessage,
+#tripMessage{
+  margin-top:10px;
+  font-size:14px;
+}
+
+/* =========================
+   BIENVENUE
+========================= */
+
+.welcome{
+  margin:4px 0 16px;
+}
+
+.welcome h2{
+  margin-bottom:4px;
+}
+
+.welcome p{
+  margin:0;
+  color:#6b7280;
+}
+
+/* =========================
+   TITRES DE SECTION
+========================= */
+
+.sectionHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.sectionHead h2{
+  margin-bottom:0;
+}
+
+.sectionHead select{
+  width:auto;
+  min-width:125px;
+  margin:0;
+}
+
+/* =========================
+   KILOMETRAGE
+========================= */
+
+.yearTotal{
+  padding:20px;
+  border-radius:16px;
+  background:#f3f4f6;
+  margin:18px 0 12px;
+  text-align:center;
+}
+
+.yearTotal span{
+  display:block;
+  color:#6b7280;
+  font-size:13px;
+}
+
+.yearTotal strong{
+  font-size:32px;
+  display:block;
+  margin-top:5px;
+}
+
+.months{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+
+.month{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:12px;
+}
+
+.month span{
+  font-size:12px;
+  color:#6b7280;
+}
+
+.month strong{
+  display:block;
+  margin-top:4px;
+}
+
+/* =========================
+   HISTORIQUE
+========================= */
+
+.exportSection{
+  margin:16px 0 6px;
+  padding:14px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+}
+
+.exportTitle{
+  font-size:13px;
+  font-weight:750;
+  color:#6b7280;
+  margin-bottom:9px;
+}
+
+.exportRow{
+  margin:0;
+}
+
+.exportRow button{
+  flex:1;
+}
+
+.trip{
+  border-top:1px solid #e5e7eb;
+  padding:15px 0;
+}
+
+.trip:first-child{
+  border-top:0;
+}
+
+.tripTop{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.km{
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.tripActions{
+  display:flex;
+  gap:7px;
+  margin-top:9px;
+}
+
+.tripActions button{
+  min-height:38px;
+  padding:8px 10px;
+  font-size:13px;
+}
+
+.delete{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+/* =========================
+   AUTOCOMPLETION
+========================= */
+
+.addressSuggestions{
+  z-index:1000;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:480px){
+
+  main{
+    padding:12px;
+  }
+
+  header{
+    padding-left:14px;
+    padding-right:14px;
+  }
+
+  header h1{
+    font-size:24px;
+  }
+
+  .mainTabs{
+    top:6px;
+    margin-bottom:12px;
+  }
+
+  .mainTab{
+    min-height:55px;
+  }
+
+  .mainTab span{
+    font-size:11px;
+  }
+
+  .card{
+    padding:16px;
+    border-radius:16px;
+  }
+
+  .months{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .sectionHead{
+    align-items:flex-start;
+  }
+
+  .sectionHead select{
+    min-width:110px;
+  }
+
+  .exportRow{
+    flex-direction:column;
+  }
+
+  .exportRow button{
+    width:100%;
+  }
+
+  .row{
+    flex-direction:column;
+  }
+
+  .row button{
+    width:100%;
+  }
+
+}
+
+/* =========================
+   GRAND ECRAN
+========================= */
+
+@media(min-width:761px){
+
+  .mainTabs{
+    position:static;
+  }
+
+}
