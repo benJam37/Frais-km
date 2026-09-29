@@ -585,14 +585,6 @@ async function boot(){
     return;
   }
 
-  const isRecovery = window.location.hash.includes("type=recovery");
-
-  if(isRecovery){
-    showAuth();
-    showNewPasswordForm();
-    return;
-  }
-
   const {data}=await client.auth.getSession();
 
   if(data.session){
