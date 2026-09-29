@@ -600,9 +600,31 @@ async function boot(){
     showApp();
     await loadProfile();
     await loadTrips();
-  }else{
+ } else {
     showAuth();
   }
 }
+
+client.auth.onAuthStateChange((_event,session)=>{
+
+  if(_event === "PASSWORD_RECOVERY"){
+    user = session?.user || null;
+    showNewPasswordForm();
+    return;
+  }
+
+  if(session&&!user){
+    user=session.user;
+    showApp();
+    loadProfile();
+    loadTrips();
+  }
+
+  if(!session){
+    user=null;
+    showAuth();
+  }
+
 });
+
 boot();
