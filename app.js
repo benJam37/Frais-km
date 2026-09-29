@@ -316,16 +316,6 @@ $("calculate").onclick=async()=>{
   }
 };
 $("reverse").onclick=()=>{const a=$("departure").value;$("departure").value=$("arrival").value;$("arrival").value=a};
-$("gps").onclick=()=>{
-  if(!navigator.geolocation){setMsg("tripMessage","GPS indisponible.",true);return}
-  setMsg("tripMessage","Localisation en cours…");
-  navigator.geolocation.getCurrentPosition(async p=>{
-    try{
-      const u=`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${p.coords.latitude}&lon=${p.coords.longitude}`;
-      const r=await fetch(u),d=await r.json();$("departure").value=d.display_name||`${p.coords.latitude},${p.coords.longitude}`;setMsg("tripMessage","");
-    }catch{$("departure").value=`${p.coords.latitude},${p.coords.longitude}`;setMsg("tripMessage","Position GPS récupérée.")}
-  },()=>setMsg("tripMessage","Impossible d'obtenir la position.",true));
-};
 $("tripForm").onsubmit=async e=>{
   e.preventDefault();if(calculatedKm==null)return;
   const {error}=await client.from("trips").insert({user_id:user.id,trip_date:$("date").value,departure:$("departure").value.trim(),arrival:$("arrival").value.trim(),distance_km:calculatedKm,reason:$("reason").value.trim()});
