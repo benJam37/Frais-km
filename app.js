@@ -459,6 +459,43 @@ $("signupForm").onsubmit=async e=>{
   if(error)setMsg("authMessage",error.message,true);
   else setMsg("authMessage","Compte créé. Vérifie ton e-mail si une confirmation est demandée.");
 };
+$("updatePasswordForm").onsubmit=async e=>{
+  e.preventDefault();
+
+  const password=$("newPassword").value;
+  const confirmation=$("confirmPassword").value;
+
+  if(password.length<8){
+    setMsg("authMessage","Le mot de passe doit contenir au moins 8 caractères.",true);
+    return;
+  }
+
+  if(password!==confirmation){
+    setMsg("authMessage","Les deux mots de passe ne correspondent pas.",true);
+    return;
+  }
+
+  setMsg("authMessage","Modification du mot de passe...");
+
+  const {error}=await client.auth.updateUser({
+    password
+  });
+
+  if(error){
+    setMsg("authMessage",error.message,true);
+    return;
+  }
+
+  $("newPassword").value="";
+  $("confirmPassword").value="";
+
+  showAuth("login");
+
+  setMsg(
+    "authMessage",
+    "Mot de passe modifié avec succès. Tu peux maintenant te connecter."
+  );
+};
 $("logout").onclick=()=>client.auth.signOut();
 
 $("calculate").onclick=async()=>{
