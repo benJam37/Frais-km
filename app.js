@@ -73,7 +73,125 @@ function renderHistory(){
       <div class="tripActions"><button class="secondary edit" data-id="${t.id}">Modifier</button><button class="delete" data-id="${t.id}">Supprimer</button></div>
     </div>`).join(""):'<div class="small">Aucun trajet pour cette période.</div>';
 }
+// ---------------------------------------------------------
+// EXPORT EXCEL
+// ---------------------------------------------------------
 
+function exportTripsToExcel(tripsToExport, filename, title){
+
+  if(!tripsToExport.length){
+    setMsg("exportMessage","Aucun trajet à exporter.",true);
+    return;
+  }
+
+  const rows = tripsToExport.map(t => ({
+    "Date": new Date(t.trip_date+"T12:00:00").toLocaleDateString("fr-FR"),
+    "Départ": t.departure,
+    "Arrivée": t.arrival,
+    "Motif": t.reason || "",
+    "Distance (km)": Number(t.distance_km)
+  }));
+
+  const total = tripsToExport.reduce(
+    (sum,t) => sum + Number(t.distance_km),
+    0
+  );
+
+  const data = [
+    [title],
+    [],
+    ["Date","Départ","Arrivée","Motif","Distance (km)"],
+    ...rows.map(r => [
+      r["Date"],
+      r["Départ"],
+      r["Arrivée"],
+      r["Motif"],
+      r["Distance (km)"]
+    ]),
+    [],
+    ["","","","TOTAL",Math.round(total * 10) / 10]
+  ];
+
+  const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+  worksheet["!cols"] = [
+    { wch: 13 },
+    { wch: 40 },
+    { wch: 40 },
+    { wch: 30 },
+    { wch: 16 }
+  ];
+
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    "Frais kilométriques"
+  );
+
+  XLSX.writeFile(workbook, filename);
+
+  setMsg(
+    "exportMessage",
+    `Export terminé : ${filename}`
+  );
+}
+
+
+// Export de l'année sélectionnée
+$("exportYear").onclick = () => {
+
+  const year = Number($("yearSelect").value);
+
+  const yearTrips = trips.filter(
+    t => Number(t.trip_date.slice(0,4)) === year
+  );
+
+  exportTripsToExcel(
+    yearTrips,
+    `Frais_KM_${year}.xlsx`,
+    `Frais kilométriques - ${year}`
+  );
+};
+
+
+// Export du mois sélectionné
+$("exportMonth").onclick = () => {
+
+  const selectedMonth = $("historyMonth").value;
+
+  if(selectedMonth === "all"){
+    setMsg(
+      "exportMessage",
+      "Sélectionne d'abord un mois dans l'historique.",
+      true
+    );
+    return;
+  }
+
+  const monthTrips = trips.filter(
+    t => t.trip_date.startsWith(selectedMonth)
+  );
+
+  const date = new Date(selectedMonth+"-01T12:00:00");
+
+  const monthName = date.toLocaleDateString(
+    "fr-FR",
+    {month:"long"}
+  );
+
+  const year = selectedMonth.slice(0,4);
+
+  const formattedMonth =
+    monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+  exportTripsToExcel(
+    monthTrips,
+    `Frais_KM_${formattedMonth}_${year}.xlsx`,
+    `Frais kilométriques - ${formattedMonth} ${year}`
+  );
+};
 async function calculateDistance(departure, arrival){
 
   const { data, error } = await client.functions.invoke("calculate-distance", {
