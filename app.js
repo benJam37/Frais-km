@@ -138,19 +138,78 @@ function renderHistory(){
     (d==="all"||t.trip_date===d)
   );
 
-  $("history").innerHTML=arr.length?arr.map(t=>`
-    <div class="trip">
-      <div class="tripTop">
-        <strong>${new Date(t.trip_date+"T12:00:00").toLocaleDateString("fr-FR")}</strong>
-        <span class="km">${fmt(t.distance_km)}</span>
+  if(!arr.length){
+    $("history").innerHTML='<div class="small">Aucun trajet pour cette période.</div>';
+    return;
+  }
+
+  const groups={};
+
+  arr.forEach(t=>{
+    if(!groups[t.trip_date]){
+      groups[t.trip_date]=[];
+    }
+    groups[t.trip_date].push(t);
+  });
+
+  $("history").innerHTML=Object.keys(groups).sort((a,b)=>b.localeCompare(a)).map(date=>{
+
+    const dayTrips=groups[date];
+    const dayTotal=dayTrips.reduce((sum,t)=>sum+Number(t.distance_km),0);
+
+    const dateLabel=new Date(date+"T12:00:00").toLocaleDateString(
+      "fr-FR",
+      {
+        weekday:"long",
+        day:"numeric",
+        month:"long",
+        year:"numeric"
+      }
+    );
+
+    return `
+      <div class="historyDay">
+
+        <div class="historyDayHeader">
+          <div>
+            <strong>${dateLabel}</strong>
+            <div class="small">
+              ${dayTrips.length} trajet${dayTrips.length>1?"s":""}
+            </div>
+          </div>
+
+          <strong>${fmt(dayTotal)}</strong>
+        </div>
+
+        ${dayTrips.map(t=>`
+          <div class="trip">
+            <div class="tripTop">
+              <strong>${new Date(t.trip_date+"T12:00:00").toLocaleDateString("fr-FR")}</strong>
+              <span class="km">${fmt(t.distance_km)}</span>
+            </div>
+
+            <div>${esc(t.departure)} → ${esc(t.arrival)}</div>
+
+            <div class="small">
+              ${esc(t.reason||"Sans motif")}
+            </div>
+
+            <div class="tripActions">
+              <button class="secondary edit" data-id="${t.id}">
+                Modifier
+              </button>
+
+              <button class="delete" data-id="${t.id}">
+                Supprimer
+              </button>
+            </div>
+          </div>
+        `).join("")}
+
       </div>
-      <div>${esc(t.departure)} → ${esc(t.arrival)}</div>
-      <div class="small">${esc(t.reason||"Sans motif")}</div>
-      <div class="tripActions">
-        <button class="secondary edit" data-id="${t.id}">Modifier</button>
-        <button class="delete" data-id="${t.id}">Supprimer</button>
-      </div>
-    </div>`).join(""):'<div class="small">Aucun trajet pour cette période.</div>';
+    `;
+
+  }).join("");
 }
 // ---------------------------------------------------------
 // EXPORT EXCEL
