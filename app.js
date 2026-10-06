@@ -63,15 +63,11 @@ function populateYears(){
     ...trips.map(t=>Number(t.trip_date.slice(0,4)))
   ])].sort((a,b)=>b-a);
 
-  const current=$( "yearSelect" ).value;
+ $( "yearSelect" ).innerHTML=years
+  .map(y=>`<option value="${y}">${y}</option>`)
+  .join("");
 
-  $( "yearSelect" ).innerHTML=years
-    .map(y=>`<option value="${y}">${y}</option>`)
-    .join("");
-
-  if(years.includes(Number(current))){
-    $( "yearSelect" ).value=current;
-  }
+$( "yearSelect" ).value=new Date().getFullYear();
 
   const y=$( "yearSelect" ).value||new Date().getFullYear();
 
