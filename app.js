@@ -194,15 +194,11 @@ function renderHistory(){
               ${esc(t.reason||"Sans motif")}
             </div>
 
-            <div class="tripActions">
-              <button class="secondary edit" data-id="${t.id}">
-                Modifier
-              </button>
-
-              <button class="delete" data-id="${t.id}">
-                Supprimer
-              </button>
-            </div>
+           <div class="tripActions">
+            <button class="delete" data-id="${t.id}">
+              Supprimer
+            </button>
+          </div>
           </div>
         `).join("")}
 
