@@ -55,7 +55,7 @@ async function loadProfile(){
 async function loadFavoriteAddresses(){
   const {data,error}=await client
     .from("favorite_addresses")
-    .select("id,name,address,created_at")
+    .select("id,name,address,emoji,created_at")
     .eq("user_id",user.id)
     .order("created_at",{ascending:true});
 
