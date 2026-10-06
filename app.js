@@ -8,6 +8,7 @@ let user = null;
 let calculatedKm = null;
 let trips = [];
 let yearInitialized = false;
+let favoriteAddresses = [];
 
 function todayISO(){
   const d = new Date(), off = d.getTimezoneOffset();
