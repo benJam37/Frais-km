@@ -676,6 +676,7 @@ $("history").onclick=async e=>{
     $("date").value=t.trip_date;$("departure").value=t.departure;$("arrival").value=t.arrival;$("reason").value=t.reason||"";
     calculatedKm=Number(t.distance_km);$("result").classList.remove("hidden");$("result").textContent="Distance enregistrée : "+fmt(calculatedKm);$("saveTrip").disabled=false;
     setMsg("tripMessage","Trajet chargé. Enregistrer créera une nouvelle ligne.");
+    document.querySelector('.mainTab[data-page="trip"]').click();
     window.scrollTo({top:0,behavior:"smooth"});
   }
 };
