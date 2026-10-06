@@ -155,7 +155,7 @@ const favoriteEmoji = emoji.trim() || "📍";
     .insert({
       user_id:user.id,
       name:favoriteName,
-      address:address
+      address:address,
       emoji:favoriteEmoji
     });
 
