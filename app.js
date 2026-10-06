@@ -786,6 +786,7 @@ if(isRecovery){
     showApp();
     await loadProfile();
     await loadFavoriteAddresses();
+    renderFavoriteAddresses();
     await loadTrips();
  } else {
     showAuth();
@@ -805,6 +806,7 @@ client.auth.onAuthStateChange((_event,session)=>{
     showApp();
     loadProfile();
     loadFavoriteAddresses();
+    renderFavoriteAddresses();
     loadTrips();
   }
 
