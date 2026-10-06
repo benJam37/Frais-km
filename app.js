@@ -217,11 +217,7 @@ if(!favoriteName){
   return;
 }
 
-const emoji = prompt("Quel emoji veux-tu utiliser ? 🏠 🏢 🏸");
-
-if(emoji === null)return;
-
-const favoriteEmoji = emoji.trim() || "📍";
+const favoriteEmoji = await chooseFavoriteEmoji();
 
   if(!favoriteName){
     setMsg("tripMessage","Le nom du favori ne peut pas être vide.",true);
