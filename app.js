@@ -662,24 +662,28 @@ $("historyMonth").onchange=()=>{
 
 $("historyDay").onchange=renderHistory;
 $("history").onclick=async e=>{
-  const b=e.target.closest("button");if(!b)return;
-  const id=b.dataset.id,t=trips.find(x=>String(x.id)===id);if(!t)return;
+  const b=e.target.closest("button");
+  if(!b)return;
+
+  const id=b.dataset.id;
+  const t=trips.find(x=>String(x.id)===id);
+  if(!t)return;
+
   if(b.classList.contains("delete")){
     if(!confirm("Supprimer ce trajet ?"))return;
-    const {error}=await client.from("trips").delete().eq("id",id).eq("user_id",user.id);
-    if(error){setMsg("tripMessage",error.message,true);return} await loadTrips();
-  } else {
-    $("date").value=t.trip_date;$("departure").value=t.departure;$("arrival").value=t.arrival;$("reason").value=t.reason||"";
-    calculatedKm=Number(t.distance_km);$("result").classList.remove("hidden");$("result").textContent="Distance enregistrée : "+fmt(calculatedKm);$("saveTrip").disabled=false;
-    setMsg("tripMessage","Trajet chargé. Enregistrer créera une nouvelle ligne.");
-    const newTripTab=[...document.querySelectorAll(".mainTab")]
-      .find(tab=>tab.textContent.trim().includes("Nouveau trajet"));
 
-    if(newTripTab){
-      newTripTab.click();
+    const {error}=await client
+      .from("trips")
+      .delete()
+      .eq("id",id)
+      .eq("user_id",user.id);
+
+    if(error){
+      setMsg("tripMessage",error.message,true);
+      return;
     }
 
-    window.scrollTo({top:0,behavior:"smooth"});
+    await loadTrips();
   }
 };
 // ---------------------------------------------------------
