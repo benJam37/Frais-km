@@ -58,15 +58,63 @@ async function loadTrips(){
 }
 
 function populateYears(){
-  const years=[...new Set([new Date().getFullYear(),...trips.map(t=>Number(t.trip_date.slice(0,4)))])].sort((a,b)=>b-a);
-  const current=$("yearSelect").value;
-  $("yearSelect").innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join("");
-  if(years.includes(Number(current))) $("yearSelect").value=current;
-  const y=$("yearSelect").value||new Date().getFullYear();
-  const months=[...new Set(trips.filter(t=>t.trip_date.startsWith(y+"-")).map(t=>t.trip_date.slice(0,7)))].sort().reverse();
-  const hm=$("historyMonth").value;
-  $("historyMonth").innerHTML=`<option value="all">Toute l'année</option>`+months.map(m=>`<option value="${m}">${new Date(m+"-01T12:00:00").toLocaleDateString("fr-FR",{month:"long"})}</option>`).join("");
-  if(months.includes(hm)||hm==="all") $("historyMonth").value=hm||"all";
+  const years=[...new Set([
+    new Date().getFullYear(),
+    ...trips.map(t=>Number(t.trip_date.slice(0,4)))
+  ])].sort((a,b)=>b-a);
+
+  const current=$( "yearSelect" ).value;
+
+  $( "yearSelect" ).innerHTML=years
+    .map(y=>`<option value="${y}">${y}</option>`)
+    .join("");
+
+  if(years.includes(Number(current))){
+    $( "yearSelect" ).value=current;
+  }
+
+  const y=$( "yearSelect" ).value||new Date().getFullYear();
+
+  const months=[...new Set(
+    trips
+      .filter(t=>t.trip_date.startsWith(y+"-"))
+      .map(t=>t.trip_date.slice(0,7))
+  )].sort().reverse();
+
+  const hm=$( "historyMonth" ).value;
+
+  $( "historyMonth" ).innerHTML=
+    `<option value="all">Toute l'année</option>`+
+    months
+      .map(m=>`<option value="${m}">${new Date(m+"-01T12:00:00").toLocaleDateString("fr-FR",{month:"long"})}</option>`)
+      .join("");
+
+  if(months.includes(hm)||hm==="all"){
+    $( "historyMonth" ).value=hm||"all";
+  }
+
+  const selectedMonth=$( "historyMonth" ).value;
+
+  const days=[...new Set(
+    trips
+      .filter(t=>
+        Number(t.trip_date.slice(0,4))===Number(y) &&
+        (selectedMonth==="all" || t.trip_date.startsWith(selectedMonth))
+      )
+      .map(t=>t.trip_date)
+  )].sort().reverse();
+
+  const hd=$( "historyDay" ).value;
+
+  $( "historyDay" ).innerHTML=
+    `<option value="all">Tous les jours</option>`+
+    days
+      .map(d=>`<option value="${d}">${new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"})}</option>`)
+      .join("");
+
+  if(days.includes(hd)||hd==="all"){
+    $( "historyDay" ).value=hd||"all";
+  }
 }
 function renderStats(){
   const y=Number($("yearSelect").value);
@@ -82,13 +130,26 @@ function renderStats(){
 function renderHistory(){
   const y=Number($("yearSelect").value);
   const m=$("historyMonth").value;
-  const arr=trips.filter(t=>Number(t.trip_date.slice(0,4))===y && (m==="all"||t.trip_date.startsWith(m)));
+  const d=$("historyDay").value;
+
+  const arr=trips.filter(t=>
+    Number(t.trip_date.slice(0,4))===y &&
+    (m==="all"||t.trip_date.startsWith(m)) &&
+    (d==="all"||t.trip_date===d)
+  );
+
   $("history").innerHTML=arr.length?arr.map(t=>`
     <div class="trip">
-      <div class="tripTop"><strong>${new Date(t.trip_date+"T12:00:00").toLocaleDateString("fr-FR")}</strong><span class="km">${fmt(t.distance_km)}</span></div>
+      <div class="tripTop">
+        <strong>${new Date(t.trip_date+"T12:00:00").toLocaleDateString("fr-FR")}</strong>
+        <span class="km">${fmt(t.distance_km)}</span>
+      </div>
       <div>${esc(t.departure)} → ${esc(t.arrival)}</div>
       <div class="small">${esc(t.reason||"Sans motif")}</div>
-      <div class="tripActions"><button class="secondary edit" data-id="${t.id}">Modifier</button><button class="delete" data-id="${t.id}">Supprimer</button></div>
+      <div class="tripActions">
+        <button class="secondary edit" data-id="${t.id}">Modifier</button>
+        <button class="delete" data-id="${t.id}">Supprimer</button>
+      </div>
     </div>`).join(""):'<div class="small">Aucun trajet pour cette période.</div>';
 }
 // ---------------------------------------------------------
@@ -533,8 +594,18 @@ $("tripForm").onsubmit=async e=>{
   calculatedKm=null;$("saveTrip").disabled=true;$("result").classList.add("hidden");$("departure").value="";$("arrival").value="";$("reason").value="";
   setMsg("tripMessage","Trajet enregistré ✅");await loadTrips();
 };
-$("yearSelect").onchange=()=>{populateYears();renderStats();renderHistory()};
-$("historyMonth").onchange=renderHistory;
+$("yearSelect").onchange=()=>{
+  populateYears();
+  renderStats();
+  renderHistory();
+};
+
+$("historyMonth").onchange=()=>{
+  populateYears();
+  renderHistory();
+};
+
+$("historyDay").onchange=renderHistory;
 $("history").onclick=async e=>{
   const b=e.target.closest("button");if(!b)return;
   const id=b.dataset.id,t=trips.find(x=>String(x.id)===id);if(!t)return;
