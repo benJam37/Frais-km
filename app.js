@@ -67,6 +67,34 @@ async function loadFavoriteAddresses(){
   favoriteAddresses=data||[];
 }
 
+function renderFavoriteAddresses(){
+
+  const containers = [
+    $("departureFavorites"),
+    $("arrivalFavorites")
+  ];
+
+  containers.forEach(container => {
+
+    container.innerHTML = "";
+
+    favoriteAddresses.forEach(favorite => {
+
+      const button = document.createElement("button");
+
+      button.type = "button";
+      button.className = "favoriteButton";
+      button.textContent = favorite.name;
+      button.dataset.address = favorite.address;
+
+      container.appendChild(button);
+
+    });
+
+  });
+
+}
+
 async function loadTrips(){
   const {data,error}=await client.from("trips").select("id,trip_date,departure,arrival,distance_km,reason,created_at").eq("user_id",user.id).order("trip_date",{ascending:false}).order("created_at",{ascending:false});
   if(error){setMsg("tripMessage","Impossible de charger les trajets : "+error.message,true);return}
