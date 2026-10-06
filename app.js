@@ -119,6 +119,45 @@ function setupFavoriteButtons(){
 
 }
 
+async function addFavoriteAddress(inputId){
+
+  const address = $(inputId).value.trim();
+
+  if(!address){
+    setMsg("tripMessage","Saisis d'abord une adresse.",true);
+    return;
+  }
+
+  const name = prompt("Quel nom veux-tu donner à ce favori ?");
+
+  if(name === null)return;
+
+  const favoriteName = name.trim();
+
+  if(!favoriteName){
+    setMsg("tripMessage","Le nom du favori ne peut pas être vide.",true);
+    return;
+  }
+
+  const {error}=await client
+    .from("favorite_addresses")
+    .insert({
+      user_id:user.id,
+      name:favoriteName,
+      address:address
+    });
+
+  if(error){
+    setMsg("tripMessage","Impossible d'ajouter le favori : "+error.message,true);
+    return;
+  }
+
+  await loadFavoriteAddresses();
+  renderFavoriteAddresses();
+
+  setMsg("tripMessage","Favori ajouté ✅");
+}
+
 async function loadTrips(){
   const {data,error}=await client.from("trips").select("id,trip_date,departure,arrival,distance_km,reason,created_at").eq("user_id",user.id).order("trip_date",{ascending:false}).order("created_at",{ascending:false});
   if(error){setMsg("tripMessage","Impossible de charger les trajets : "+error.message,true);return}
@@ -593,6 +632,13 @@ function setupAddressAutocomplete(inputId){
 setupAddressAutocomplete("departure");
 setupAddressAutocomplete("arrival");
 setupFavoriteButtons();
+$("addFavoriteDeparture").onclick = () => {
+  addFavoriteAddress("departure");
+};
+
+$("addFavoriteArrival").onclick = () => {
+  addFavoriteAddress("arrival");
+};
 
 $("tabLogin").onclick=()=>showAuth("login");
 $("tabSignup").onclick=()=>showAuth("signup");
