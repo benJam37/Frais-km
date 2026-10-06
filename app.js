@@ -119,6 +119,84 @@ function setupFavoriteButtons(){
 
 }
 
+function chooseFavoriteEmoji(){
+
+  return new Promise(resolve => {
+
+    const emojis = [
+      "🏠","🏥","🩺","🏨","👨‍⚕️","🦷",
+      "💼","🏢","🏪","📦","🧰","🚗",
+      "🏫","🎓","🏸","☕","📍"
+    ];
+
+    const overlay = document.createElement("div");
+
+    overlay.style.cssText = `
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:2000;
+    `;
+
+    const box = document.createElement("div");
+
+    box.style.cssText = `
+      background:white;
+      border-radius:16px;
+      padding:20px;
+      width:min(360px,90%);
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    `;
+
+    box.innerHTML = `
+      <h3 style="margin:0 0 15px;">
+        Choisis un emoji
+      </h3>
+
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(6,1fr);
+        gap:8px;
+      "></div>
+    `;
+
+    const grid = box.querySelector("div");
+
+    emojis.forEach(emoji => {
+
+      const button = document.createElement("button");
+
+      button.type = "button";
+      button.textContent = emoji;
+
+      button.style.cssText = `
+        font-size:26px;
+        padding:8px;
+        border:1px solid #e5e7eb;
+        border-radius:10px;
+        background:#f9fafb;
+        cursor:pointer;
+      `;
+
+      button.onclick = () => {
+        overlay.remove();
+        resolve(emoji);
+      };
+
+      grid.appendChild(button);
+
+    });
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+  });
+
+}
+
 async function addFavoriteAddress(inputId){
 
   const address = $(inputId).value.trim();
