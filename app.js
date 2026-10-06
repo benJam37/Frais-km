@@ -52,6 +52,21 @@ async function loadProfile(){
   $("hello").textContent = "Bonjour "+esc(data?.first_name||"👋")+" 👋";
 }
 
+async function loadFavoriteAddresses(){
+  const {data,error}=await client
+    .from("favorite_addresses")
+    .select("id,name,address,created_at")
+    .eq("user_id",user.id)
+    .order("created_at",{ascending:true});
+
+  if(error){
+    setMsg("tripMessage","Impossible de charger les favoris : "+error.message,true);
+    return;
+  }
+
+  favoriteAddresses=data||[];
+}
+
 async function loadTrips(){
   const {data,error}=await client.from("trips").select("id,trip_date,departure,arrival,distance_km,reason,created_at").eq("user_id",user.id).order("trip_date",{ascending:false}).order("created_at",{ascending:false});
   if(error){setMsg("tripMessage","Impossible de charger les trajets : "+error.message,true);return}
@@ -742,6 +757,7 @@ if(isRecovery){
     user=data.session.user;
     showApp();
     await loadProfile();
+    await loadFavoriteAddresses();
     await loadTrips();
  } else {
     showAuth();
@@ -760,6 +776,7 @@ client.auth.onAuthStateChange((_event,session)=>{
     user=session.user;
     showApp();
     loadProfile();
+    loadFavoriteAddresses();
     loadTrips();
   }
 
