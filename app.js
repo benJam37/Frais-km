@@ -84,7 +84,7 @@ function renderFavoriteAddresses(){
 
       button.type = "button";
       button.className = "favoriteButton";
-      button.textContent = favorite.name;
+      button.textContent = `${favorite.emoji} ${favorite.name}`;
       button.dataset.address = favorite.address;
 
       container.appendChild(button);
@@ -130,9 +130,20 @@ async function addFavoriteAddress(inputId){
 
   const name = prompt("Quel nom veux-tu donner à ce favori ?");
 
-  if(name === null)return;
+if(name === null)return;
 
-  const favoriteName = name.trim();
+const favoriteName = name.trim();
+
+if(!favoriteName){
+  setMsg("tripMessage","Le nom du favori ne peut pas être vide.",true);
+  return;
+}
+
+const emoji = prompt("Quel emoji veux-tu utiliser ? 🏠 🏢 🏸");
+
+if(emoji === null)return;
+
+const favoriteEmoji = emoji.trim() || "📍";
 
   if(!favoriteName){
     setMsg("tripMessage","Le nom du favori ne peut pas être vide.",true);
@@ -145,6 +156,7 @@ async function addFavoriteAddress(inputId){
       user_id:user.id,
       name:favoriteName,
       address:address
+      emoji:favoriteEmoji
     });
 
   if(error){
