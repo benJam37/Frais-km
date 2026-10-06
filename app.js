@@ -95,6 +95,30 @@ function renderFavoriteAddresses(){
 
 }
 
+function setupFavoriteButtons(){
+
+  $("departureFavorites").onclick = event => {
+
+    const button = event.target.closest(".favoriteButton");
+
+    if(!button)return;
+
+    $("departure").value = button.dataset.address;
+
+  };
+
+  $("arrivalFavorites").onclick = event => {
+
+    const button = event.target.closest(".favoriteButton");
+
+    if(!button)return;
+
+    $("arrival").value = button.dataset.address;
+
+  };
+
+}
+
 async function loadTrips(){
   const {data,error}=await client.from("trips").select("id,trip_date,departure,arrival,distance_km,reason,created_at").eq("user_id",user.id).order("trip_date",{ascending:false}).order("created_at",{ascending:false});
   if(error){setMsg("tripMessage","Impossible de charger les trajets : "+error.message,true);return}
@@ -568,6 +592,7 @@ function setupAddressAutocomplete(inputId){
 // Activation sur les deux champs
 setupAddressAutocomplete("departure");
 setupAddressAutocomplete("arrival");
+setupFavoriteButtons();
 
 $("tabLogin").onclick=()=>showAuth("login");
 $("tabSignup").onclick=()=>showAuth("signup");
