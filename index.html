@@ -37,6 +37,7 @@
 
 <button type="submit">Se connecter</button>
   </form>
+
 <form id="resetForm" class="hidden">
   <h2>Réinitialiser mon mot de passe</h2>
 
@@ -60,7 +61,8 @@
     ← Retour à la connexion
   </button>
 </form>
-  <form id="signupForm" class="hidden">
+
+<form id="signupForm" class="hidden">
     <h2>Créer mon profil</h2>
     <label>Prénom<input id="firstName" autocomplete="given-name" required></label>
     <label>Nom<input id="lastName" autocomplete="family-name" required></label>
@@ -68,8 +70,9 @@
     <label>Mot de passe<input id="signupPassword" type="password" autocomplete="new-password" minlength="8" required></label>
     <button type="submit">Créer mon compte</button>
     <p class="hint">Un e-mail de confirmation peut être demandé selon les réglages du compte.</p>
-  </form>
-  <form id="updatePasswordForm" class="hidden">
+</form>
+
+<form id="updatePasswordForm" class="hidden">
   <h2>Nouveau mot de passe</h2>
 
   <p class="hint">
@@ -102,6 +105,7 @@
     🔐 Enregistrer le nouveau mot de passe
   </button>
 </form>
+
   <div id="authMessage" aria-live="polite"></div>
 </section>
 
@@ -232,7 +236,13 @@
       <div class="sectionHead">
         <h2>📋 Historique</h2>
 
-        <select id="historyMonth"></select>
+        <div class="row">
+          <select id="historyMonth"></select>
+
+          <select id="historyDay">
+            <option value="all">Tous les jours</option>
+          </select>
+        </div>
       </div>
 
       <!-- EXPORTS -->
