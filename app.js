@@ -7,6 +7,7 @@ const $ = id => document.getElementById(id);
 let user = null;
 let calculatedKm = null;
 let trips = [];
+let yearInitialized = false;
 
 function todayISO(){
   const d = new Date(), off = d.getTimezoneOffset();
@@ -63,13 +64,20 @@ function populateYears(){
     ...trips.map(t=>Number(t.trip_date.slice(0,4)))
   ])].sort((a,b)=>b-a);
 
- $( "yearSelect" ).innerHTML=years
+ const current=$( "yearSelect" ).value;
+
+$( "yearSelect" ).innerHTML=years
   .map(y=>`<option value="${y}">${y}</option>`)
   .join("");
 
-$( "yearSelect" ).value=new Date().getFullYear();
+if(!yearInitialized){
+  $( "yearSelect" ).value=new Date().getFullYear();
+  yearInitialized=true;
+}else if(years.includes(Number(current))){
+  $( "yearSelect" ).value=current;
+}
 
-  const y=$( "yearSelect" ).value||new Date().getFullYear();
+const y=$( "yearSelect" ).value||new Date().getFullYear();
 
   const months=[...new Set(
     trips
