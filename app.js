@@ -616,7 +616,10 @@ $("updatePasswordForm").onsubmit=async e=>{
     "Mot de passe modifié avec succès. Tu peux maintenant te connecter."
   );
 };
-$("logout").onclick=()=>client.auth.signOut();
+$("logout").onclick=async()=>{
+  await client.auth.signOut();
+  window.location.reload();
+};
 
 $("calculate").onclick=async()=>{
   const a=$("departure").value.trim(),b=$("arrival").value.trim();
