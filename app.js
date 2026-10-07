@@ -911,7 +911,18 @@ $("calculate").onclick=async()=>{
     $("calculate").disabled=false;
   }
 };
-$("reverse").onclick=()=>{const a=$("departure").value;$("departure").value=$("arrival").value;$("arrival").value=a};
+$("reverse").onclick=()=>{
+
+  const a=$("departure").value;
+
+  $("departure").value=$("arrival").value;
+  $("arrival").value=a;
+
+  calculatedKm=null;
+  $("saveTrip").disabled=true;
+  $("result").classList.add("hidden");
+
+};
 $("tripForm").onsubmit=async e=>{
   e.preventDefault();if(calculatedKm==null)return;
   const {error}=await client.from("trips").insert({user_id:user.id,trip_date:$("date").value,departure:$("departure").value.trim(),arrival:$("arrival").value.trim(),distance_km:calculatedKm,reason:$("reason").value.trim()});
