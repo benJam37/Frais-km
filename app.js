@@ -967,13 +967,25 @@ $("history").onclick=async e=>{
     await loadTrips();
   }
 };
+
+async function refreshAppData(){
+
+  await loadFavoriteAddresses();
+  renderFavoriteAddresses();
+
+  await loadTrips();
+
+}
+
 // ---------------------------------------------------------
 // NAVIGATION PRINCIPALE
 // ---------------------------------------------------------
 
 document.querySelectorAll(".mainTab").forEach(tab => {
 
-  tab.addEventListener("click", () => {
+  tab.addEventListener("click", async () => {
+
+  await refreshAppData();
 
     const pageId = tab.dataset.page;
 
