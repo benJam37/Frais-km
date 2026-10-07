@@ -78,18 +78,32 @@ function renderFavoriteAddresses(){
 
     container.innerHTML = "";
 
-    favoriteAddresses.forEach(favorite => {
+favoriteAddresses.forEach(favorite => {
 
-      const button = document.createElement("button");
+  const wrapper = document.createElement("div");
 
-      button.type = "button";
-      button.className = "favoriteButton";
-      button.textContent = `${favorite.emoji} ${favorite.name}`;
-      button.dataset.address = favorite.address;
+  wrapper.className = "favoriteWrapper";
 
-      container.appendChild(button);
+  const button = document.createElement("button");
 
-    });
+  button.type = "button";
+  button.className = "favoriteButton";
+  button.textContent = `${favorite.emoji} ${favorite.name}`;
+  button.dataset.address = favorite.address;
+
+  const deleteButton = document.createElement("button");
+
+  deleteButton.type = "button";
+  deleteButton.className = "favoriteDelete";
+  deleteButton.textContent = "×";
+  deleteButton.dataset.id = favorite.id;
+
+  wrapper.appendChild(button);
+  wrapper.appendChild(deleteButton);
+
+  container.appendChild(wrapper);
+
+});
 
   });
 
