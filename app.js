@@ -113,6 +113,13 @@ function setupFavoriteButtons(){
 
   $("departureFavorites").onclick = event => {
 
+    const deleteButton = event.target.closest(".favoriteDelete");
+
+    if(deleteButton){
+      deleteFavoriteAddress(deleteButton.dataset.id);
+      return;
+    }
+
     const button = event.target.closest(".favoriteButton");
 
     if(!button)return;
@@ -121,7 +128,15 @@ function setupFavoriteButtons(){
 
   };
 
+
   $("arrivalFavorites").onclick = event => {
+
+    const deleteButton = event.target.closest(".favoriteDelete");
+
+    if(deleteButton){
+      deleteFavoriteAddress(deleteButton.dataset.id);
+      return;
+    }
 
     const button = event.target.closest(".favoriteButton");
 
@@ -131,6 +146,39 @@ function setupFavoriteButtons(){
 
   };
 
+}
+
+async function deleteFavoriteAddress(id){
+
+  const favorite = favoriteAddresses.find(
+    item => String(item.id) === String(id)
+  );
+
+  if(!favorite)return;
+
+  if(!confirm(`Supprimer le favori « ${favorite.name} » ?`)){
+    return;
+  }
+
+  const {error}=await client
+    .from("favorite_addresses")
+    .delete()
+    .eq("id",id)
+    .eq("user_id",user.id);
+
+  if(error){
+    setMsg(
+      "tripMessage",
+      "Impossible de supprimer le favori : "+error.message,
+      true
+    );
+    return;
+  }
+
+  await loadFavoriteAddresses();
+  renderFavoriteAddresses();
+
+  setMsg("tripMessage","Favori supprimé ✅");
 }
 
 function chooseFavoriteEmoji(){
